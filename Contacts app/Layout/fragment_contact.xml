@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/blue"
+    android:orientation="vertical">
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <EditText
+            android:id="@+id/FenterName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:hint="Enter name" />
+
+        <EditText
+            android:id="@+id/FenterPhone"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/FenterName"
+            android:layout_marginTop="10dp"
+            android:hint="Enter Phone number" />
+
+        <TextView
+            android:id="@+id/Ft1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/FenterPhone"
+            android:layout_marginLeft="6dp"
+            android:layout_marginTop="10dp"
+            android:text="Relationship:"
+            android:textSize="19dp" />
+
+        <ListView
+            android:id="@+id/Frelationlist"
+            android:layout_width="match_parent"
+            android:layout_height="300dp"
+            android:layout_below="@id/Ft1"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"></ListView>
+
+        <Button
+            android:id="@+id/FaddValues"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/Frelationlist"
+            android:layout_alignParentRight="true"
+            android:text="ADD PERSON" />
+    </RelativeLayout>
+
+</ScrollView>

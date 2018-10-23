@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:descendantFocusability="blocksDescendants">
+
+    <TextView
+        android:id="@+id/one"
+        android:text="Name:"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="#14182b"
+        android:layout_marginTop="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_gravity="center"
+        android:layout_weight="1"
+        android:textSize="22sp" />
+    <TextView
+        android:id="@+id/showname"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="#14182b"
+        android:layout_below="@id/one"
+        android:layout_marginTop="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_gravity="center"
+        android:layout_weight="1"
+        android:textSize="22sp" />
+    <TextView
+        android:id="@+id/two"
+        android:text="Phone:"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/showname"
+        android:textColor="#14182b"
+        android:layout_gravity="center"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_weight="1"
+        android:textSize="22sp" />
+    <TextView
+        android:id="@+id/showphone"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="#14182b"
+        android:layout_below="@id/two"
+        android:layout_marginTop="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_gravity="center"
+        android:layout_weight="1"
+        android:textSize="22sp" />
+    <TextView
+        android:id="@+id/three"
+        android:text="Relationship:"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/showphone"
+        android:textColor="#14182b"
+        android:layout_gravity="center"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_weight="1"
+        android:textSize="22sp" />
+
+    <ListView
+        android:id="@+id/relationlist"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/three"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="16dp"
+        android:backgroundTint="#80bebebe"
+        android:textAlignment="center"></ListView>
+
+</RelativeLayout>
+

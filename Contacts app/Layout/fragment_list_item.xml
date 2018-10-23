@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:descendantFocusability="blocksDescendants">
+
+    <TextView
+        android:id="@+id/fListName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="#14182b"
+        android:hint="apples"
+        android:inputType="textCapWords"
+        android:layout_toLeftOf="@id/fListBox"
+        android:layout_gravity="center"
+        android:gravity="center_horizontal"
+        android:layout_weight="1"
+        android:textStyle="bold"
+        android:textSize="22sp" />
+    <CheckBox
+        android:id="@+id/fListBox"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="10dp"
+        android:focusable="false"
+        android:focusableInTouchMode="false"
+        />
+
+</RelativeLayout>
+

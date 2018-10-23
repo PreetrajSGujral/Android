@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/crimson">
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ListView
+            android:id="@+id/Factivity_list"
+            android:layout_width="match_parent"
+            android:layout_height="550dp"
+            android:layout_above="@id/Fdelete"
+            android:layout_marginBottom="5dp" />
+
+        <Button
+            android:id="@+id/Fdelete"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginRight="13dp"
+            android:layout_marginBottom="7dp"
+            android:text="DELETE" />
+
+        <Button
+            android:id="@+id/Fadd"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginLeft="12dp"
+            android:layout_marginBottom="6dp"
+            android:text="ADD"
+            android:onClick="addContact"/>
+
+    </RelativeLayout>
+</android.support.constraint.ConstraintLayout>
