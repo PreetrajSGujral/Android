@@ -116,12 +116,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
 
             set_markers();
-            LatLng origin= new LatLng(40.52332895, -74.4588630);
-            LatLng dest= new LatLng(40.5253586, -74.4374398);
-            String url = getUrl(origin, dest);
-            FetchUrl fetchUrl = new FetchUrl();
-            fetchUrl.execute(url);
 
+            red_line();
 
         }
     }
@@ -453,8 +449,9 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                     Circle circle = mMap.addCircle(new CircleOptions()
                             .center(new LatLng(Double.valueOf(X.get(i1)), Double.valueOf(Y.get(i1))))
                             .radius(300)
-                            .strokeColor(Color.BLACK)
-                            .fillColor(Color.BLUE));
+                            .strokeColor(Color.BLUE)
+                            .strokeWidth(5)
+                            .fillColor(Color.TRANSPARENT));
                 }
             }
         }
@@ -494,8 +491,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         private void moveCamera(LatLng latLng, float zoom) {
             Log.d(TAG, "moveCamera: moving the camera to: lat: " + latLng.latitude + ", lng: " + latLng.longitude);
             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, zoom));
-            longitude.setText((" Long: " + latLng.longitude).substring(0, 15));
-            latitude.setText((" Lat: " + latLng.latitude).substring(0, 15));
+            longitude.setText(("" + latLng.longitude).substring(0, 11));
+            latitude.setText(("" + latLng.latitude).substring(0, 8));
 
         }
 
@@ -576,7 +573,22 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             startActivity(i);
         }
 
+        private void red_line()
+        {
+            for(int i=0;i<X.size()-1;i++) {
+                LatLng origin = new LatLng(Double.valueOf(X.get(i)), Double.valueOf(Y.get(i)));
+                LatLng dest = new LatLng(Double.valueOf(X.get(i+1)), Double.valueOf(Y.get(i+1)));
+                String url = getUrl(origin, dest);
+                FetchUrl fetchUrl = new FetchUrl();
+                fetchUrl.execute(url);
+            }
 
+            LatLng origin = new LatLng(Double.valueOf(X.get(X.size()-1)), Double.valueOf(Y.get(X.size()-1)));
+            LatLng dest = new LatLng(Double.valueOf(X.get(0)), Double.valueOf(Y.get(0)));
+            String url = getUrl(origin, dest);
+            FetchUrl fetchUrl = new FetchUrl();
+            fetchUrl.execute(url);
+        }
 
     }
 
