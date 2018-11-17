@@ -1,10 +1,20 @@
 package com.example.android.mapsapp;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.text.DateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+
 import android.Manifest;
-import android.app.PendingIntent;
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Color;
@@ -13,12 +23,12 @@ import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
-import android.os.Bundle;
+import android.os.AsyncTask;
 import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.FragmentActivity;
+import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -30,62 +40,39 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.api.Api;
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.common.api.PendingResult;
-import com.google.android.gms.common.api.Result;
-import com.google.android.gms.common.api.ResultCallback;
-import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.location.Geofence;
-import com.google.android.gms.location.GeofencingClient;
-import com.google.android.gms.location.GeofencingRequest;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.UiSettings;
-import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.Circle;
 import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 
-import java.io.FileDescriptor;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.text.DateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Locale;
-import java.util.concurrent.TimeUnit;
+import org.json.JSONObject;
 
-public class MapsSecond extends AppCompatActivity implements OnMapReadyCallback {
+public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback {
 
-    private static final String TAG = "MapSecond";
+    String address = "a";
+    private static final String TAG = "MapActivity";
     private static final String FINE_LOCATION = Manifest.permission.ACCESS_FINE_LOCATION;
     private static final String COURSE_LOCATION = Manifest.permission.ACCESS_COARSE_LOCATION;
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 1234;
     private static final float DEFAULT_ZOOM = 15f;
-
+    private TextView longitude, latitude, adres;
+    Button checkin;
+    Button show;
+    Button act2;
+    public boolean ismain = false;
     View mapView;
+    Circle circle;
 
-
-
-
-
-    Button save;
-    EditText enterplace;
-
-    String date, time, entered_place="";
+    String date, time;
     ArrayList<String> X;
     ArrayList<String> Y;
     ArrayList<String> place;
@@ -99,13 +86,7 @@ public class MapsSecond extends AppCompatActivity implements OnMapReadyCallback 
 
     MarkerOptions options;
     DataBaseHelper db;
-    Button markedlist;
-    LatLng a;
 
-
-    ArrayList<String> Lat;
-    ArrayList<String> Lng;
-    ArrayList<String> Place;
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
@@ -122,113 +103,48 @@ public class MapsSecond extends AppCompatActivity implements OnMapReadyCallback 
                 return;
             }
             mMap.setMyLocationEnabled(true);
-            mMap.getUiSettings().setTiltGesturesEnabled(true);
-            mMap.getUiSettings().setCompassEnabled(true);
             mMap.getUiSettings().setMyLocationButtonEnabled(true);
 
-           /* View locationButton = ((View) mapView.findViewById(Integer.parseInt("1")).getParent()).findViewById(Integer.parseInt("2"));
+            View locationButton = ((View) mapView.findViewById(Integer.parseInt("1")).getParent()).findViewById(Integer.parseInt("2"));
             RelativeLayout.LayoutParams rlp = (RelativeLayout.LayoutParams) locationButton.getLayoutParams();
             // position on right bottom
             rlp.addRule(RelativeLayout.ALIGN_PARENT_TOP, 0);
             rlp.addRule(RelativeLayout.ALIGN_PARENT_TOP, RelativeLayout.TRUE);
             rlp.setMargins(100, 250, 80, 0);
-*/
 
+            mMap.getUiSettings().setCompassEnabled(true);
             mMap.getUiSettings().setZoomControlsEnabled(true);
             mMap.getUiSettings().setZoomGesturesEnabled(true);
 
-            // fake_locations();
+           fake_locations();
 
             set_markers();
-            mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
-                @Override
-                public void onMapClick(LatLng latLng) {
-                    a= latLng;
-                    final AlertDialog.Builder mBuilder = new AlertDialog.Builder(MapsSecond.this);
-                    final View mView = getLayoutInflater().inflate(R.layout.dialog_checkin, null);
-                    enterplace = (EditText) mView.findViewById(R.id.customname);
-                    save = (Button) mView.findViewById(R.id.save);
-                    mBuilder.setView(mView);
-                    final AlertDialog dialog = mBuilder.create();
-                    dialog.show();
-                    save.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            entered_place=enterplace.getText().toString();
-                            MarkerOptions options = new MarkerOptions().title(entered_place).position(a).draggable(true);
-                            mMap.addMarker(options);
-                            dialog.dismiss();
-                            Log.i("Marker added","at "+a.latitude+", "+a.longitude);
-                            db.insertMarkerData(entered_place,a.latitude+"",a.longitude+"");
-                        }
-                    });
-                }
-            });
-            mMap.setOnMarkerDragListener(new GoogleMap.OnMarkerDragListener() {
-                @Override
-                public void onMarkerDragStart(Marker marker) {
 
-                }
-
-                @Override
-                public void onMarkerDrag(Marker marker) {
-
-                }
-
-                @Override
-                public void onMarkerDragEnd(Marker marker) {
-                    LatLng latLng=marker.getPosition();
-                    String s=marker.getTitle();
-                    db.updateMarkerTable(s,latLng.latitude+"",latLng.longitude+"");
-                }
-            });
-
+            red_line();
 
         }
     }
 
-
-
-
-
-/*
-
-
-
-    private void addLocationAlert()
-    {
-        addGeoLocation(40.49752,-74.4484875);
-        addGeoLocation(40.52332895,-74.4588630);
-        addGeoLocation(40.5253586, -74.4374398);
-        addGeoLocation(40.4791277, -74.4314729796267);
-        addGeoLocation(40.48469945, -74.43666649072438);
-    }
-*/
-
-
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_second_map);
+        setContentView(R.layout.activity_maps);
+
+        longitude = (TextView) findViewById(R.id.longitude);
+        latitude = (TextView) findViewById(R.id.latitude);
+        adres = (TextView) findViewById(R.id.address);
+        checkin = (Button) findViewById(R.id.checkin);
+        show = (Button) findViewById(R.id.show_checkin);
+        act2 = (Button) findViewById(R.id.act_2);
+
         db = new DataBaseHelper(this);
         MarkerPoints = new ArrayList<>();
-        markedlist = (Button) findViewById(R.id.markedlist);
 
-
-        Lat= new ArrayList<>();
-        Lng= new ArrayList<>();
-        Place= new ArrayList<>();
         getLocationPermission();
         locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
 
 
-        final AlertDialog.Builder mBuilder = new AlertDialog.Builder(MapsSecond.this);
-        final View mView = getLayoutInflater().inflate(R.layout.dialog_inrange, null);
-        final TextView mCustomLocation = (TextView) mView.findViewById(R.id.foundinrange);
-        mBuilder.setView(mView);
-        final AlertDialog dialog1 = mBuilder.create();
-
-        if (locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
+        /*if (locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
             if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                 return;
             }
@@ -236,37 +152,14 @@ public class MapsSecond extends AppCompatActivity implements OnMapReadyCallback 
 
                 @Override
                 public void onLocationChanged(Location location) {
-                    double latitude = location.getLatitude();
-                    double longitude = location.getLongitude();
-
-                    Log.i("Location change",latitude+","+longitude);
-                    LatLng latLng = new LatLng(latitude, longitude);
+                    double latitude1 = location.getLatitude();
+                    double longitude1 = location.getLongitude();
+                    longitude.setText((longitude1+"").substring(3));
+                    latitude.setText((longitude1+"").substring(3));
+                    LatLng latLng = new LatLng(latitude1, longitude1);
                     moveCamera(latLng, DEFAULT_ZOOM);
-                    getLocalAddress(location, latitude, longitude);
-
-                    Location current= new Location("curent");
-                    current.setLongitude(longitude);
-                    current.setLatitude(latitude);
-
-
-                    int found=0;
-                    for (int i = 0; i < Lat.size(); i++) {
-                        Location markers = new Location(Place.get(i));
-                        markers.setLatitude((Double.valueOf(Lat.get(i))));
-                        markers.setLongitude((Double.valueOf(Lng.get(i))));
-                        if (current.distanceTo(markers) < 400) {
-                            Log.i("Found in range ", "marker number i");
-                            mCustomLocation.setText("Found! within marker "+i);
-                            dialog1.show();
-                            break;
-                        }
-                        else
-                        {
-                            Log.i("Not found in any range"," dubara check kar");
-                            dialog1.dismiss();
-                        }
-                    }
-
+                    getLocalAddress(location, latitude1, longitude1);
+                    ismain = Looper.getMainLooper().isCurrentThread();
                 }
 
                 @Override
@@ -284,80 +177,280 @@ public class MapsSecond extends AppCompatActivity implements OnMapReadyCallback 
 
                 }
             });
-        }
+        }*/
         //IF THE GPS PROVIDER IS WORKING =====> USE GPS PROVIDER
-        else if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
-            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 10, 5, new LocationListener() {
-
-                @Override
-                public void onLocationChanged(Location location) {
-                    double latitude = location.getLatitude();
-                    double longitude = location.getLongitude();
-                    Log.i("Location change",latitude+","+longitude);
+        //  else if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 0, new LocationListener() {
 
 
-                    LatLng latLng = new LatLng(latitude, longitude);
-                    moveCamera(latLng, DEFAULT_ZOOM);
-                    getLocalAddress(location, latitude, longitude);
+            @Override
+            public void onLocationChanged(Location location) {
+                double latitude1 = location.getLatitude();
+                double longitude1 = location.getLongitude();
+                longitude.setText((longitude1 + "").substring(3));
+                latitude.setText((longitude1 + "").substring(3));
+                LatLng latLng = new LatLng(latitude1, longitude1);
+                moveCamera(latLng, DEFAULT_ZOOM);
+                getLocalAddress(location, latitude1, longitude1);
 
-                    Location current= new Location("curent");
-                    current.setLongitude(longitude);
-                    current.setLatitude(latitude);
+            }
+
+            @Override
+            public void onStatusChanged(String s, int i, Bundle bundle) {
+
+            }
+
+            @Override
+            public void onProviderEnabled(String s) {
+
+            }
+
+            @Override
+            public void onProviderDisabled(String s) {
+
+            }
+        });
+        // }
 
 
-
-                    int found=0;
-                    for (int i = 0; i < Lat.size(); i++) {
-                        Location markers = new Location(Place.get(i));
-                        markers.setLatitude((Double.valueOf(Lat.get(i))));
-                        markers.setLongitude((Double.valueOf(Lng.get(i))));
-                        if (current.distanceTo(markers) < 400) {
-                            Log.i("Found in range ", "marker number i");
-                            mCustomLocation.setText("Found! within marker "+i);
-                            dialog1.show();
-                            break;
-                        }
-                        else
-                        {
-                            Log.i("Not found in any range"," dubara check kar");
-                            dialog1.dismiss();
-                        }
-                    }
-
-                }
-
-                @Override
-                public void onStatusChanged(String s, int i, Bundle bundle) {
-
-                }
-
-                @Override
-                public void onProviderEnabled(String s) {
-
-                }
-
-                @Override
-                public void onProviderDisabled(String s) {
-
-                }
-            });
-        }
-
-        markedlist.setOnClickListener(new View.OnClickListener() {
+        checkin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent i = new Intent(MapsSecond.this, MarkerList.class);
-                startActivity(i);
+                final AlertDialog.Builder mBuilder = new AlertDialog.Builder(MapsActivity.this);
+                final View mView = getLayoutInflater().inflate(R.layout.dialog_checkin, null);
+                final EditText mCustomLocation = (EditText) mView.findViewById(R.id.customname);
+                Button mSave = (Button) mView.findViewById(R.id.save);
+                mBuilder.setView(mView);
+                final AlertDialog dialog = mBuilder.create();
+                dialog.show();
+                mSave.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        Location current = new Location("curent");
+                        current.setLatitude(Double.valueOf(latitude.getText().toString()));
+                        current.setLongitude(Double.valueOf(longitude.getText().toString()));
+                        int found = 0;
+                        for (int i = 0; i < X.size(); i++) {
+                            Location markers = new Location(place.get(i));
+                            markers.setLatitude((Double.valueOf(X.get(i))));
+                            markers.setLongitude((Double.valueOf(Y.get(i))));
+                            if (current.distanceTo(markers) < 30) {
+                                Log.i("Found in range ", "marker number i");
+                                insertcheckin(place.get(i));
+                                found = 1;
+                                break;
+                            }
+                        }
+                        if (found == 0) {
+                            insertcheckin(mCustomLocation.getText().toString());
+                        }
+                        dialog.dismiss();
+                    }
+                });
+            }
+        });
+
+        act2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent i1 = new Intent(MapsActivity.this, MapsSecond.class);
+                startActivity(i1);
             }
         });
 
     }
 
+    private void insertcheckin(String place) {
+        Cursor cursor = db.get_address(place);
+        String add = "";
+        while (cursor.moveToNext()) {
+            add = cursor.getString(0);
+        }
+        Log.i("Got place:","adding "+add);
+        String currentDateTimeString = DateFormat.getDateTimeInstance().format(new Date());
+        String date1 = currentDateTimeString.substring(0, 11);
+        String time1 = currentDateTimeString.substring(11);
+        boolean ad = db.insertCheckinData(place, latitude.getText().toString(), longitude.getText().toString(), add, date1, time1);
+        Log.i("ADD in Checkin", ad + "");
+    }
 
+
+    private String getUrl(LatLng origin, LatLng dest) {
+
+        // Origin of route
+        String str_origin = "origin=" + origin.latitude + "," + origin.longitude;
+
+        // Destination of route
+        String str_dest = "destination=" + dest.latitude + "," + dest.longitude;
+
+
+        // Sensor enabled
+        String sensor = "sensor=false";
+
+        // Building the parameters to the web service
+        String parameters = str_origin + "&" + str_dest + "&" + sensor;
+
+        // Output format
+        String output = "json";
+
+        // Building the url to the web service
+        String url = "https://maps.googleapis.com/maps/api/directions/" + output + "?" + parameters + "&key=AIzaSyAWNScQMQ44iOD2hzRfKoHCYCXRW_nz9UU";
+
+
+        return url;
+    }
+
+    private class FetchUrl extends AsyncTask<String, Void, String> {
+
+        @Override
+        protected String doInBackground(String... url) {
+
+            // For storing data from web service
+            String data = "";
+
+            try {
+                // Fetching the data from web service
+                data = downloadUrl(url[0]);
+                Log.d("Background Task data", data.toString());
+            } catch (Exception e) {
+                Log.d("Background Task", e.toString());
+            }
+            return data;
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+            super.onPostExecute(result);
+
+            ParserTask parserTask = new ParserTask();
+
+            // Invokes the thread for parsing the JSON data
+            parserTask.execute(result);
+
+        }
+    }
+
+    private String downloadUrl(String strUrl) throws IOException {
+        String data = "";
+        InputStream iStream = null;
+        HttpURLConnection urlConnection = null;
+        try {
+            URL url = new URL(strUrl);
+
+            // Creating an http connection to communicate with url
+            urlConnection = (HttpURLConnection) url.openConnection();
+
+            // Connecting to url
+            urlConnection.connect();
+
+            // Reading data from url
+            iStream = urlConnection.getInputStream();
+
+            BufferedReader br = new BufferedReader(new InputStreamReader(iStream));
+
+            StringBuffer sb = new StringBuffer();
+
+            String line = "";
+            while ((line = br.readLine()) != null) {
+                sb.append(line);
+            }
+
+            data = sb.toString();
+            Log.d("downloadUrl", data.toString());
+            br.close();
+
+        } catch (Exception e) {
+            Log.d("Exception", e.toString());
+        } finally {
+            iStream.close();
+            urlConnection.disconnect();
+        }
+        return data;
+    }
+
+    private class ParserTask extends AsyncTask<String, Integer, List<List<HashMap<String, String>>>> {
+
+        // Parsing the data in non-ui thread
+        @Override
+        protected List<List<HashMap<String, String>>> doInBackground(String... jsonData) {
+
+            JSONObject jObject;
+            List<List<HashMap<String, String>>> routes = null;
+
+            try {
+                jObject = new JSONObject(jsonData[0]);
+                Log.d("ParserTask", jsonData[0].toString());
+                DataParser parser = new DataParser();
+                Log.d("ParserTask", parser.toString());
+
+                // Starts parsing data
+                routes = parser.parse(jObject);
+                Log.d("ParserTask", "Executing routes");
+                Log.d("ParserTask", routes.toString());
+
+            } catch (Exception e) {
+                Log.d("ParserTask", e.toString());
+                e.printStackTrace();
+            }
+            return routes;
+        }
+
+        // Executes in UI thread, after the parsing process
+        @Override
+        protected void onPostExecute(List<List<HashMap<String, String>>> result) {
+            ArrayList<LatLng> points;
+            PolylineOptions lineOptions = null;
+            Log.d("Result size", "" + result.size());
+            // Traversing through all the routes
+            for (int i = 0; i < result.size(); i++) {
+                points = new ArrayList<>();
+                lineOptions = new PolylineOptions();
+                // Fetching i-th route
+                List<HashMap<String, String>> path = result.get(i);
+
+                // Fetching all the points in i-th route
+                for (int j = 0; j < path.size(); j++) {
+                    HashMap<String, String> point = path.get(j);
+
+                    double lat = Double.parseDouble(point.get("lat"));
+                    double lng = Double.parseDouble(point.get("lng"));
+                    LatLng position = new LatLng(lat, lng);
+
+                    points.add(position);
+                }
+
+                // Adding all the points in the route to LineOptions
+                lineOptions.addAll(points);
+                lineOptions.width(10);
+                lineOptions.color(Color.RED);
+
+                Log.d("onPostExecute", "onPostExecute lineoptions decoded");
+
+            }
+
+            // Drawing polyline in the Google Map for the i-th route
+            if (lineOptions != null) {
+                mMap.addPolyline(lineOptions);
+            } else {
+                Log.d("onPostExecute", "without Polylines drawn");
+            }
+        }
+    }
+
+
+    public void insert_data(String location) {
+        String currentDateTimeString = DateFormat.getDateTimeInstance().format(new Date());
+        date = currentDateTimeString.substring(0, 11);
+        time = currentDateTimeString.substring(11);
+        String x = latitude.getText().toString();
+        String y = longitude.getText().toString();
+        String address = adres.getText().toString();
+        final boolean b = db.insertData(location, x, y, address, date, time);
+        latitude.setText(b + "");
+    }
 
     public void set_markers() {
         Cursor cursor = db.viewData();
-        Cursor mcursor= db.viewMarkerData();
         X = new ArrayList<>();
         Y = new ArrayList<>();
         place = new ArrayList<>();
@@ -369,35 +462,21 @@ public class MapsSecond extends AppCompatActivity implements OnMapReadyCallback 
                 place.add(cursor.getString(0));
                 ++i;
             }
-        int j=0;
-            if (mcursor.getCount() != 0) {
-                while (mcursor.moveToNext()) {
-                    Lat.add(mcursor.getString(1));
-                    Lng.add(mcursor.getString(2));
-                    Place.add(mcursor.getString(0));
-                    ++j;
-                }
-            }
 
-           // latitude.setText(i + "");
+            latitude.setText(i + "");
             for (int i1 = 0; i1 < i; i1++) {
                 MarkerOptions options = new MarkerOptions().title(place.get(i1)).position(new LatLng(Double.valueOf(X.get(i1)), Double.valueOf(Y.get(i1))));
                 mMap.addMarker(options);
                 Circle circle = mMap.addCircle(new CircleOptions()
                         .center(new LatLng(Double.valueOf(X.get(i1)), Double.valueOf(Y.get(i1))))
-                        .radius(400)
+                        .radius(300)
                         .strokeColor(Color.BLUE)
                         .strokeWidth(5)
                         .fillColor(Color.TRANSPARENT));
             }
-            for(int i1=0;i1<j;i1++)
-            {
-                MarkerOptions options = new MarkerOptions().title(Place.get(i1)).position(new LatLng(Double.valueOf(Lat.get(i1)), Double.valueOf(Lng.get(i1))));
-                mMap.addMarker(options);
-            }
-
         }
     }
+
     private void getDeviceLocation() {
         Log.d(TAG, "getDeviceLocation: getting the devices current location");
 
@@ -419,7 +498,7 @@ public class MapsSecond extends AppCompatActivity implements OnMapReadyCallback 
 
                         } else {
                             Log.d(TAG, "onComplete: current location is null");
-                            Toast.makeText(MapsSecond.this, "unable to get current location", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(MapsActivity.this, "unable to get current location", Toast.LENGTH_SHORT).show();
                         }
                     }
                 });
@@ -430,29 +509,21 @@ public class MapsSecond extends AppCompatActivity implements OnMapReadyCallback 
 
     }
 
-
-
-
     private void moveCamera(LatLng latLng, float zoom) {
         Log.d(TAG, "moveCamera: moving the camera to: lat: " + latLng.latitude + ", lng: " + latLng.longitude);
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, zoom));
-        CameraPosition cameraPosition = new CameraPosition.Builder()
-                .target(latLng)
-                .zoom(10)
-                .bearing(70)
-                .tilt(25)
-                .build();
-        mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
-       // longitude.setText(("" + latLng.longitude).substring(0, 11));
-       // latitude.setText(("" + latLng.latitude).substring(0, 8));
+        longitude.setText(("" + latLng.longitude).substring(0, 9));
+        latitude.setText(("" + latLng.latitude).substring(0, 8));
 
     }
+
     private void initMap() {
         Log.d(TAG, "initMap: initializing map");
-        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map2);
+        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         mapView = mapFragment.getView();
-        mapFragment.getMapAsync(MapsSecond.this);
+        mapFragment.getMapAsync(MapsActivity.this);
     }
+
     private void getLocationPermission() {
         Log.d(TAG, "getLocationPermission: getting location permissions");
         String[] permissions = {Manifest.permission.ACCESS_FINE_LOCATION,
@@ -475,6 +546,7 @@ public class MapsSecond extends AppCompatActivity implements OnMapReadyCallback 
                     LOCATION_PERMISSION_REQUEST_CODE);
         }
     }
+
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         Log.d(TAG, "onRequestPermissionsResult: called.");
@@ -498,33 +570,54 @@ public class MapsSecond extends AppCompatActivity implements OnMapReadyCallback 
             }
         }
     }
+
+
+    // GEOCODER AND ADDRESS
     public void getLocalAddress(Location currentLocation, double x, double y) {
         Geocoder geocoder;
-        String address="";
         try {
             List<Address> addresses;
-            geocoder = new Geocoder(MapsSecond.this, Locale.getDefault());
+            geocoder = new Geocoder(MapsActivity.this, Locale.getDefault());
             addresses = geocoder.getFromLocation(currentLocation.getLatitude(), currentLocation.getLongitude(), 2); // Here 1 represent max location result to returned, by documents it recommended 1 to 5
             address = addresses.get(0).getAddressLine(0); // If any additional address line present than only, check with max available address lines by getMaxAddressLineIndex()
-           // adres.setText(address);
+            adres.setText(address);
         } catch (IOException e) {
-            Toast.makeText(MapsSecond.this, "address: " + address, Toast.LENGTH_LONG);
+            Toast.makeText(MapsActivity.this, "address: " + address, Toast.LENGTH_LONG);
             e.printStackTrace();
         }
     }
 
+    //called from xml.......to call activity to show list of checkins
+    public void viewlist(View view) {
+        Intent i = new Intent(this, Checkin.class);
+        startActivity(i);
+    }
 
-    private void insertcheckin(String place, double latitude, double longitude) {
-        Cursor cursor = db.get_address(place);
-        String add = "";
-        while (cursor.moveToNext()) {
-            add = cursor.getString(0);
+    private void red_line() {
+        if (X.size() > 1) {
+            for (int i = 0; i < X.size() - 1; i++) {
+                LatLng origin = new LatLng(Double.valueOf(X.get(i)), Double.valueOf(Y.get(i)));
+                LatLng dest = new LatLng(Double.valueOf(X.get(i + 1)), Double.valueOf(Y.get(i + 1)));
+                String url = getUrl(origin, dest);
+                FetchUrl fetchUrl = new FetchUrl();
+                fetchUrl.execute(url);
+            }
+
+            LatLng origin = new LatLng(Double.valueOf(X.get(X.size() - 1)), Double.valueOf(Y.get(X.size() - 1)));
+            LatLng dest = new LatLng(Double.valueOf(X.get(0)), Double.valueOf(Y.get(0)));
+            String url = getUrl(origin, dest);
+            FetchUrl fetchUrl = new FetchUrl();
+            fetchUrl.execute(url);
         }
-        Log.i("Got place:","adding "+add);
-        String currentDateTimeString = DateFormat.getDateTimeInstance().format(new Date());
-        String date1 = currentDateTimeString.substring(0, 11);
-        String time1 = currentDateTimeString.substring(11);
-        boolean ad = db.insertCheckinData(place, latitude+"", longitude+"", add, date1, time1);
-        Log.i("ADD in Checkin", ad + "");
+    }
+
+
+    public void fake_locations() {
+        db.insertData("Home", "40.49752", "-74.4484875", "42 Easton Ave Fl 1, New Bruswick, NJ 08901, USA", "Nov 5, 2018", "08:00 PM");
+        db.insertData("Busch", "40.52332895", "-74.4588630", "Busch Campus Center, 604 Bartholomew Rd, Piscataway Township, NJ 08854", "Nov 4, 2018", "01:33 AM");
+        db.insertData("Livi", "40.5253586", "-74.4374398", "Livingston Apartments BUilding B, Piscataway Township, NJ 08854", "Nov 4, 2018", "01:54 AM");
+        db.insertData("Cook", "40.4791277", "-74.4314729796267", "Cook Campus Center, New Brunswick, NJ 08901", "Nov 4, 2018", "02:16 AM");
+        db.insertData("Douglass", "40.48469945", "-74.43666649072438", "Douglass Campus Center, 100 George St, New Brunswick, NJ 08901", "Nov 4, 2018", "03:33 AM");
+
     }
 }
