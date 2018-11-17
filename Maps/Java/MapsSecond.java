@@ -2,7 +2,9 @@ package com.example.android.mapsapp;
 
 import android.Manifest;
 import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Color;
@@ -16,6 +18,7 @@ import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -24,10 +27,19 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.Api;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.PendingResult;
+import com.google.android.gms.common.api.Result;
+import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.Geofence;
+import com.google.android.gms.location.GeofencingClient;
 import com.google.android.gms.location.GeofencingRequest;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -42,14 +54,19 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 
+import java.io.FileDescriptor;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.concurrent.TimeUnit;
 
 public class MapsSecond extends AppCompatActivity implements OnMapReadyCallback {
 
@@ -60,6 +77,9 @@ public class MapsSecond extends AppCompatActivity implements OnMapReadyCallback 
     private static final float DEFAULT_ZOOM = 15f;
 
     View mapView;
+
+
+
 
 
     Button save;
@@ -79,8 +99,13 @@ public class MapsSecond extends AppCompatActivity implements OnMapReadyCallback 
 
     MarkerOptions options;
     DataBaseHelper db;
-
+    Button markedlist;
     LatLng a;
+
+
+    ArrayList<String> Lat;
+    ArrayList<String> Lng;
+    ArrayList<String> Place;
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
@@ -162,7 +187,23 @@ public class MapsSecond extends AppCompatActivity implements OnMapReadyCallback 
         }
     }
 
-   // https://github.com/googlesamples/android-play-location/tree/master/Geofencing
+
+
+
+
+/*
+
+
+
+    private void addLocationAlert()
+    {
+        addGeoLocation(40.49752,-74.4484875);
+        addGeoLocation(40.52332895,-74.4588630);
+        addGeoLocation(40.5253586, -74.4374398);
+        addGeoLocation(40.4791277, -74.4314729796267);
+        addGeoLocation(40.48469945, -74.43666649072438);
+    }
+*/
 
 
     @Override
@@ -171,26 +212,61 @@ public class MapsSecond extends AppCompatActivity implements OnMapReadyCallback 
         setContentView(R.layout.activity_second_map);
         db = new DataBaseHelper(this);
         MarkerPoints = new ArrayList<>();
+        markedlist = (Button) findViewById(R.id.markedlist);
 
 
+        Lat= new ArrayList<>();
+        Lng= new ArrayList<>();
+        Place= new ArrayList<>();
         getLocationPermission();
         locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
 
+
+        final AlertDialog.Builder mBuilder = new AlertDialog.Builder(MapsSecond.this);
+        final View mView = getLayoutInflater().inflate(R.layout.dialog_inrange, null);
+        final TextView mCustomLocation = (TextView) mView.findViewById(R.id.foundinrange);
+        mBuilder.setView(mView);
+        final AlertDialog dialog1 = mBuilder.create();
 
         if (locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
             if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                 return;
             }
-            locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 1000, 10000, new LocationListener() {
+            locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 10, 5, new LocationListener() {
 
                 @Override
                 public void onLocationChanged(Location location) {
                     double latitude = location.getLatitude();
                     double longitude = location.getLongitude();
 
+                    Log.i("Location change",latitude+","+longitude);
                     LatLng latLng = new LatLng(latitude, longitude);
                     moveCamera(latLng, DEFAULT_ZOOM);
                     getLocalAddress(location, latitude, longitude);
+
+                    Location current= new Location("curent");
+                    current.setLongitude(longitude);
+                    current.setLatitude(latitude);
+
+
+                    int found=0;
+                    for (int i = 0; i < Lat.size(); i++) {
+                        Location markers = new Location(Place.get(i));
+                        markers.setLatitude((Double.valueOf(Lat.get(i))));
+                        markers.setLongitude((Double.valueOf(Lng.get(i))));
+                        if (current.distanceTo(markers) < 400) {
+                            Log.i("Found in range ", "marker number i");
+                            mCustomLocation.setText("Found! within marker "+i);
+                            dialog1.show();
+                            break;
+                        }
+                        else
+                        {
+                            Log.i("Not found in any range"," dubara check kar");
+                            dialog1.dismiss();
+                        }
+                    }
+
                 }
 
                 @Override
@@ -211,15 +287,42 @@ public class MapsSecond extends AppCompatActivity implements OnMapReadyCallback 
         }
         //IF THE GPS PROVIDER IS WORKING =====> USE GPS PROVIDER
         else if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
-            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 10000, new LocationListener() {
+            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 10, 5, new LocationListener() {
 
                 @Override
                 public void onLocationChanged(Location location) {
                     double latitude = location.getLatitude();
                     double longitude = location.getLongitude();
+                    Log.i("Location change",latitude+","+longitude);
+
+
                     LatLng latLng = new LatLng(latitude, longitude);
                     moveCamera(latLng, DEFAULT_ZOOM);
                     getLocalAddress(location, latitude, longitude);
+
+                    Location current= new Location("curent");
+                    current.setLongitude(longitude);
+                    current.setLatitude(latitude);
+
+
+
+                    int found=0;
+                    for (int i = 0; i < Lat.size(); i++) {
+                        Location markers = new Location(Place.get(i));
+                        markers.setLatitude((Double.valueOf(Lat.get(i))));
+                        markers.setLongitude((Double.valueOf(Lng.get(i))));
+                        if (current.distanceTo(markers) < 400) {
+                            Log.i("Found in range ", "marker number i");
+                            mCustomLocation.setText("Found! within marker "+i);
+                            dialog1.show();
+                            break;
+                        }
+                        else
+                        {
+                            Log.i("Not found in any range"," dubara check kar");
+                            dialog1.dismiss();
+                        }
+                    }
 
                 }
 
@@ -240,12 +343,21 @@ public class MapsSecond extends AppCompatActivity implements OnMapReadyCallback 
             });
         }
 
-
+        markedlist.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent i = new Intent(MapsSecond.this, MarkerList.class);
+                startActivity(i);
+            }
+        });
 
     }
 
+
+
     public void set_markers() {
         Cursor cursor = db.viewData();
+        Cursor mcursor= db.viewMarkerData();
         X = new ArrayList<>();
         Y = new ArrayList<>();
         place = new ArrayList<>();
@@ -257,6 +369,15 @@ public class MapsSecond extends AppCompatActivity implements OnMapReadyCallback 
                 place.add(cursor.getString(0));
                 ++i;
             }
+        int j=0;
+            if (mcursor.getCount() != 0) {
+                while (mcursor.moveToNext()) {
+                    Lat.add(mcursor.getString(1));
+                    Lng.add(mcursor.getString(2));
+                    Place.add(mcursor.getString(0));
+                    ++j;
+                }
+            }
 
            // latitude.setText(i + "");
             for (int i1 = 0; i1 < i; i1++) {
@@ -264,11 +385,17 @@ public class MapsSecond extends AppCompatActivity implements OnMapReadyCallback 
                 mMap.addMarker(options);
                 Circle circle = mMap.addCircle(new CircleOptions()
                         .center(new LatLng(Double.valueOf(X.get(i1)), Double.valueOf(Y.get(i1))))
-                        .radius(300)
+                        .radius(400)
                         .strokeColor(Color.BLUE)
                         .strokeWidth(5)
                         .fillColor(Color.TRANSPARENT));
             }
+            for(int i1=0;i1<j;i1++)
+            {
+                MarkerOptions options = new MarkerOptions().title(Place.get(i1)).position(new LatLng(Double.valueOf(Lat.get(i1)), Double.valueOf(Lng.get(i1))));
+                mMap.addMarker(options);
+            }
+
         }
     }
     private void getDeviceLocation() {
@@ -384,5 +511,20 @@ public class MapsSecond extends AppCompatActivity implements OnMapReadyCallback 
             Toast.makeText(MapsSecond.this, "address: " + address, Toast.LENGTH_LONG);
             e.printStackTrace();
         }
+    }
+
+
+    private void insertcheckin(String place, double latitude, double longitude) {
+        Cursor cursor = db.get_address(place);
+        String add = "";
+        while (cursor.moveToNext()) {
+            add = cursor.getString(0);
+        }
+        Log.i("Got place:","adding "+add);
+        String currentDateTimeString = DateFormat.getDateTimeInstance().format(new Date());
+        String date1 = currentDateTimeString.substring(0, 11);
+        String time1 = currentDateTimeString.substring(11);
+        boolean ad = db.insertCheckinData(place, latitude+"", longitude+"", add, date1, time1);
+        Log.i("ADD in Checkin", ad + "");
     }
 }
