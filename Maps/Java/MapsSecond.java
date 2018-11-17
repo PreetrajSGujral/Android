@@ -1,6 +1,7 @@
 package com.example.android.mapsapp;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
@@ -79,13 +80,10 @@ public class MapsSecond extends AppCompatActivity implements OnMapReadyCallback 
     View mapView;
 
 
-
-
-
     Button save;
     EditText enterplace;
 
-    String date, time, entered_place="";
+    String date, time, entered_place = "";
     ArrayList<String> X;
     ArrayList<String> Y;
     ArrayList<String> place;
@@ -101,6 +99,9 @@ public class MapsSecond extends AppCompatActivity implements OnMapReadyCallback 
     DataBaseHelper db;
     Button markedlist;
     LatLng a;
+
+    Button startService;
+    Button stopService;
 
 
     ArrayList<String> Lat;
@@ -143,7 +144,7 @@ public class MapsSecond extends AppCompatActivity implements OnMapReadyCallback 
             mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
                 @Override
                 public void onMapClick(LatLng latLng) {
-                    a= latLng;
+                    a = latLng;
                     final AlertDialog.Builder mBuilder = new AlertDialog.Builder(MapsSecond.this);
                     final View mView = getLayoutInflater().inflate(R.layout.dialog_checkin, null);
                     enterplace = (EditText) mView.findViewById(R.id.customname);
@@ -154,12 +155,12 @@ public class MapsSecond extends AppCompatActivity implements OnMapReadyCallback 
                     save.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
-                            entered_place=enterplace.getText().toString();
+                            entered_place = enterplace.getText().toString();
                             MarkerOptions options = new MarkerOptions().title(entered_place).position(a).draggable(true);
                             mMap.addMarker(options);
                             dialog.dismiss();
-                            Log.i("Marker added","at "+a.latitude+", "+a.longitude);
-                            db.insertMarkerData(entered_place,a.latitude+"",a.longitude+"");
+                            Log.i("Marker added", "at " + a.latitude + ", " + a.longitude);
+                            db.insertMarkerData(entered_place, a.latitude + "", a.longitude + "");
                         }
                     });
                 }
@@ -177,18 +178,17 @@ public class MapsSecond extends AppCompatActivity implements OnMapReadyCallback 
 
                 @Override
                 public void onMarkerDragEnd(Marker marker) {
-                    LatLng latLng=marker.getPosition();
-                    String s=marker.getTitle();
-                    db.updateMarkerTable(s,latLng.latitude+"",latLng.longitude+"");
+                    LatLng latLng = marker.getPosition();
+                    String s = marker.getTitle();
+                    db.updateMarkerTable(s, latLng.latitude + "", latLng.longitude + "");
                 }
             });
 
 
         }
+
+
     }
-
-
-
 
 
 /*
@@ -206,6 +206,7 @@ public class MapsSecond extends AppCompatActivity implements OnMapReadyCallback 
 */
 
 
+    @SuppressLint("MissingPermission")
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -213,18 +214,19 @@ public class MapsSecond extends AppCompatActivity implements OnMapReadyCallback 
         db = new DataBaseHelper(this);
         MarkerPoints = new ArrayList<>();
         markedlist = (Button) findViewById(R.id.markedlist);
+        startService = (Button) findViewById(R.id.startservice);
+        stopService = (Button) findViewById(R.id.stopservice);
 
-
-        Lat= new ArrayList<>();
-        Lng= new ArrayList<>();
-        Place= new ArrayList<>();
+        Lat = new ArrayList<>();
+        Lng = new ArrayList<>();
+        Place = new ArrayList<>();
         getLocationPermission();
         locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
 
 
         final AlertDialog.Builder mBuilder = new AlertDialog.Builder(MapsSecond.this);
         final View mView = getLayoutInflater().inflate(R.layout.dialog_inrange, null);
-        final TextView mCustomLocation = (TextView) mView.findViewById(R.id.foundinrange);
+        final TextView mCustomLocation = (TextView) mView.findViewById(R.id.locationrange);
         mBuilder.setView(mView);
         final AlertDialog dialog1 = mBuilder.create();
 
@@ -286,39 +288,39 @@ public class MapsSecond extends AppCompatActivity implements OnMapReadyCallback 
             });
         }*/
         //IF THE GPS PROVIDER IS WORKING =====> USE GPS PROVIDER
-       // else if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+        // else
+        if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+
             locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 10000, 5, new LocationListener() {
 
                 @Override
                 public void onLocationChanged(Location location) {
                     double latitude = location.getLatitude();
                     double longitude = location.getLongitude();
-                    Log.i("Location change",latitude+","+longitude);
+                    Log.i("Location change", latitude + "," + longitude);
 
 
                     LatLng latLng = new LatLng(latitude, longitude);
                     moveCamera(latLng, DEFAULT_ZOOM);
                     getLocalAddress(location, latitude, longitude);
 
-                    Location current= new Location("curent");
+                    Location current = new Location("curent");
                     current.setLongitude(longitude);
                     current.setLatitude(latitude);
 
 
-                    int found=0;
+                    int found = 0;
                     for (int i = 0; i < Lat.size(); i++) {
                         Location markers = new Location(Place.get(i));
                         markers.setLatitude((Double.valueOf(Lat.get(i))));
                         markers.setLongitude((Double.valueOf(Lng.get(i))));
                         if (current.distanceTo(markers) < 400) {
                             Log.i("Found in range ", "marker number i");
-                            mCustomLocation.setText("Found! within marker "+i);
+                            mCustomLocation.setText("Found! within marker " + i);
                             dialog1.show();
                             break;
-                        }
-                        else
-                        {
-                            Log.i(Place.get(i)+": Not found in any range"," dubara check kar");
+                        } else {
+                            Log.i(Place.get(i) + ": Notfound in any range", " dubara check kar");
                             dialog1.dismiss();
                         }
                     }
@@ -326,15 +328,13 @@ public class MapsSecond extends AppCompatActivity implements OnMapReadyCallback 
                         Location markers = new Location(place.get(i));
                         markers.setLatitude((Double.valueOf(X.get(i))));
                         markers.setLongitude((Double.valueOf(Y.get(i))));
-                        if (current.distanceTo(markers) < 600) {
-                            Log.i("Found in range ", "of marker "+place.get(i));
-                            mCustomLocation.setText("Found! within marker "+i);
+                        if (current.distanceTo(markers) < 30) {
+                            Log.i("Found in range ", "of marker " + place.get(i));
+                            mCustomLocation.setText("Found!within marker " + place.get(i));
                             dialog1.show();
                             break;
-                        }
-                        else
-                        {
-                            Log.i(place.get(i)+": Not found in any range",": distance is: "+current.distanceTo(markers));
+                        } else {
+                            Log.i(place.get(i) + ":Not found in any range", ": distance is: " + current.distanceTo(markers));
                             dialog1.dismiss();
                         }
                     }
@@ -356,16 +356,31 @@ public class MapsSecond extends AppCompatActivity implements OnMapReadyCallback 
 
                 }
             });
-//        }
+//}
 
-        markedlist.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent i = new Intent(MapsSecond.this, MarkerList.class);
-                startActivity(i);
-            }
-        });
+            markedlist.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent i = new Intent(MapsSecond.this, MarkerList.class);
+                    startActivity(i);
+                }
+            });
 
+            startService.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent i= new Intent(getApplicationContext(), GPS_Service.class);
+                    startService(i);
+                }
+            });
+            stopService.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent i= new Intent(getApplicationContext(), GPS_Service.class);
+                    stopService(i);
+                }
+            });
+        }
     }
 
 
@@ -400,7 +415,7 @@ public class MapsSecond extends AppCompatActivity implements OnMapReadyCallback 
                 mMap.addMarker(options);
                 Circle circle = mMap.addCircle(new CircleOptions()
                         .center(new LatLng(Double.valueOf(X.get(i1)), Double.valueOf(Y.get(i1))))
-                        .radius(400)
+                        .radius(30)
                         .strokeColor(Color.BLUE)
                         .strokeWidth(5)
                         .fillColor(Color.TRANSPARENT));
