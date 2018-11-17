@@ -45,6 +45,9 @@
             </intent-filter>
         </activity>
         <activity android:name=".Checkin"/>
+        <activity android:name=".MapsSecond"/>
+        <activity android:name=".MarkerList"/>
+        <service android:name=".GPS_Service"/>
     </application>
 
 </manifest>
