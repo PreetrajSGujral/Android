@@ -12,6 +12,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.sql.Timestamp;
 
 import android.Manifest;
 import android.content.Intent;
@@ -87,6 +88,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     MarkerOptions options;
     DataBaseHelper db;
 
+    long a=0,b=0;
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
@@ -116,7 +118,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             mMap.getUiSettings().setZoomControlsEnabled(true);
             mMap.getUiSettings().setZoomGesturesEnabled(true);
 
-           fake_locations();
+          // fake_locations();
 
             set_markers();
 
@@ -130,12 +132,15 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
 
+        Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+         a=timestamp.getTime();
+
         longitude = (TextView) findViewById(R.id.longitude);
         latitude = (TextView) findViewById(R.id.latitude);
         adres = (TextView) findViewById(R.id.address);
         checkin = (Button) findViewById(R.id.checkin);
         show = (Button) findViewById(R.id.show_checkin);
-        act2= (Button) findViewById(R.id.act_2);
+        act2 = (Button) findViewById(R.id.act_2);
 
         db = new DataBaseHelper(this);
         MarkerPoints = new ArrayList<>();
@@ -144,20 +149,21 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
 
 
-        if (locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
+        /*if (locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
             if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                 return;
             }
-            locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 1000, 10000, new LocationListener() {
+            locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 10, 5, new LocationListener() {
 
                 @Override
                 public void onLocationChanged(Location location) {
-                    double latitude = location.getLatitude();
-                    double longitude = location.getLongitude();
-
-                    LatLng latLng = new LatLng(latitude, longitude);
+                    double latitude1 = location.getLatitude();
+                    double longitude1 = location.getLongitude();
+                    longitude.setText((longitude1+"").substring(3));
+                    latitude.setText((longitude1+"").substring(3));
+                    LatLng latLng = new LatLng(latitude1, longitude1);
                     moveCamera(latLng, DEFAULT_ZOOM);
-                    getLocalAddress(location, latitude, longitude);
+                    getLocalAddress(location, latitude1, longitude1);
                     ismain = Looper.getMainLooper().isCurrentThread();
                 }
 
@@ -176,37 +182,40 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
                 }
             });
-        }
+        }*/
         //IF THE GPS PROVIDER IS WORKING =====> USE GPS PROVIDER
-        else if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
-            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 10000, new LocationListener() {
+        //  else if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 0, new LocationListener() {
 
-                @Override
-                public void onLocationChanged(Location location) {
-                    double latitude = location.getLatitude();
-                    double longitude = location.getLongitude();
-                    LatLng latLng = new LatLng(latitude, longitude);
-                    moveCamera(latLng, DEFAULT_ZOOM);
-                    getLocalAddress(location, latitude, longitude);
 
-                }
+            @Override
+            public void onLocationChanged(Location location) {
+                double latitude1 = location.getLatitude();
+                double longitude1 = location.getLongitude();
+                longitude.setText((longitude1 + "").substring(3));
+                latitude.setText((longitude1 + "").substring(3));
+                LatLng latLng = new LatLng(latitude1, longitude1);
+                moveCamera(latLng, DEFAULT_ZOOM);
+                getLocalAddress(location, latitude1, longitude1);
 
-                @Override
-                public void onStatusChanged(String s, int i, Bundle bundle) {
+            }
 
-                }
+            @Override
+            public void onStatusChanged(String s, int i, Bundle bundle) {
 
-                @Override
-                public void onProviderEnabled(String s) {
+            }
 
-                }
+            @Override
+            public void onProviderEnabled(String s) {
 
-                @Override
-                public void onProviderDisabled(String s) {
+            }
 
-                }
-            });
-        }
+            @Override
+            public void onProviderDisabled(String s) {
+
+            }
+        });
+        // }
 
 
         checkin.setOnClickListener(new View.OnClickListener() {
@@ -225,7 +234,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                         Location current = new Location("curent");
                         current.setLatitude(Double.valueOf(latitude.getText().toString()));
                         current.setLongitude(Double.valueOf(longitude.getText().toString()));
-                        int found=0;
+                        int found = 0;
                         for (int i = 0; i < X.size(); i++) {
                             Location markers = new Location(place.get(i));
                             markers.setLatitude((Double.valueOf(X.get(i))));
@@ -233,11 +242,11 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                             if (current.distanceTo(markers) < 30) {
                                 Log.i("Found in range ", "marker number i");
                                 insertcheckin(place.get(i));
-                                found=1;
+                                found = 1;
                                 break;
                             }
                         }
-                        if(found==0) {
+                        if (found == 0) {
                             insertcheckin(mCustomLocation.getText().toString());
                         }
                         dialog.dismiss();
@@ -508,7 +517,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     private void moveCamera(LatLng latLng, float zoom) {
         Log.d(TAG, "moveCamera: moving the camera to: lat: " + latLng.latitude + ", lng: " + latLng.longitude);
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, zoom));
-        longitude.setText(("" + latLng.longitude).substring(0, 11));
+        longitude.setText(("" + latLng.longitude).substring(0, 9));
         latitude.setText(("" + latLng.latitude).substring(0, 8));
 
     }
