@@ -13,6 +13,8 @@ import android.view.View;
 
 public class MainActivity extends AppCompatActivity {
 
+    private float mPreviousX=0;
+    private float mPreviousY=0;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -31,16 +33,27 @@ public class MainActivity extends AppCompatActivity {
         }
 
         @Override
-        public boolean onTouchEvent(MotionEvent event) {
-            if(event.getAction() == MotionEvent.ACTION_DOWN) {
+        public boolean onTouchEvent(MotionEvent e) {
+            // MotionEvent reports input details from the touch screen
+            // and other input controls. In this case, you are only
+            // interested in events where the touch position changed.
+
+            float x = e.getX();
+            float y = e.getY();
+            
+            if (e.getAction() == MotionEvent.ACTION_MOVE) {
+                float dx = x - mPreviousX;
+                float dy = y - mPreviousY;
+
                 if (surfaceHolder.getSurface().isValid()) {
                     Canvas canvas = surfaceHolder.lockCanvas();
                     canvas.drawColor(Color.BLACK);
-                    canvas.drawCircle(event.getX(), event.getY(), 50, paint);
+                    canvas.drawCircle(dx, dy, 50, paint);
                     surfaceHolder.unlockCanvasAndPost(canvas);
                 }
             }
-            return false;
+
+            return true;
         }
     }
 }
