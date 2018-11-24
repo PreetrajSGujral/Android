@@ -35,7 +35,6 @@ public class MainActivity extends AppCompatActivity {
             super(context);
             surfaceHolder = getHolder();
             paint.setColor(Color.RED);
-
         }
 
         @Override
