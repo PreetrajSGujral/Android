@@ -4,12 +4,17 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Path;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.Layout;
+import android.text.StaticLayout;
+import android.text.TextPaint;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
+import android.widget.TextView;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -30,6 +35,7 @@ public class MainActivity extends AppCompatActivity {
             super(context);
             surfaceHolder = getHolder();
             paint.setColor(Color.RED);
+
         }
 
         @Override
@@ -40,7 +46,6 @@ public class MainActivity extends AppCompatActivity {
 
             float x = e.getX();
             float y = e.getY();
-            
             if (e.getAction() == MotionEvent.ACTION_MOVE) {
                 float dx = x - mPreviousX;
                 float dy = y - mPreviousY;
@@ -49,10 +54,13 @@ public class MainActivity extends AppCompatActivity {
                     Canvas canvas = surfaceHolder.lockCanvas();
                     canvas.drawColor(Color.BLACK);
                     canvas.drawCircle(dx, dy, 50, paint);
+                    paint.setTextSize(25);
+                    canvas.drawText("Current X: " + dx + "  Current Y: " + dy + " Pointer count " + e.getPointerId(0), 40, 50, paint);
                     surfaceHolder.unlockCanvasAndPost(canvas);
-                }
-            }
 
+                }
+
+            }
             return true;
         }
     }
