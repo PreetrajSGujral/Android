@@ -10,12 +10,14 @@ public class MainActivity extends AppCompatActivity {
 
     Button touch;
     Button draw;
+    Button multitouch;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         touch=(Button)findViewById(R.id.touch1);
         draw=(Button)findViewById(R.id.draw1);
+        multitouch=(Button) findViewById(R.id.multi);
         touch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -28,6 +30,13 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view) {
                 Intent intent1 = new Intent(MainActivity.this, WriteOnScreenActivity.class);
                 startActivity(intent1);
+            }
+        });
+        multitouch.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent2 = new Intent(MainActivity.this, MultiTouchActivity.class);
+                startActivity(intent2);
             }
         });
     }
