@@ -61,8 +61,6 @@ public class TouchActivity extends AppCompatActivity {
             return true;
         }
 
-    
+
     }
 }
-
-  
