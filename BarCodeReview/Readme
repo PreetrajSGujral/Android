@@ -5,7 +5,7 @@ It makes use of the Barcode Reader API of android.
 Once the barcode for the product is generated, the reviews are fetched and filtered for the product from the website. 
 
 
-The Activity here makes a google search based on the barcode generated and extracts the top search results with links to the Amazon website using Jsoup.
+The Activity here makes a google search based on the barcode generated and extracts the top search results with links to the Amazon website using Jsoup Library.
 Manifest file contains the internet access permission
 Layout contains the Main layout- consisting of a text view and a button
 
