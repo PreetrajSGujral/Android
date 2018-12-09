@@ -38,6 +38,11 @@ public class MainActivity extends AppCompatActivity {
 
     Button button;
     TextView result;
+    ArrayList<String> websites;
+
+
+    String barcode_number="034000087525";
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,11 +50,10 @@ public class MainActivity extends AppCompatActivity {
         setContentView(activity_main);
         result = (TextView) findViewById(R.id.text);
         button = (Button) findViewById(R.id.button);
+        websites= new ArrayList<>();
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //  getWebsite();
-
                 new doit().execute();
             }
         });
@@ -61,7 +65,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             protected Void doInBackground(Void... voids) {
                 try {
-                    org.jsoup.nodes.Document doc = Jsoup.connect("https://www.google.com/search?q=amazon+pepsi&num=5").get();
+                    org.jsoup.nodes.Document doc = Jsoup.connect("https://www.google.com/search?q=amazon+"+barcode_number+"&num=5").get();
                     words = doc.text();
                     Elements links= doc.select("a[href]");
                     int i=0;
@@ -82,10 +86,10 @@ public class MainActivity extends AppCompatActivity {
             @Override
             protected void onPostExecute(Void avoid) {
                 super.onPostExecute(avoid);
-                //result.setText(words);
-                result.setText(w.get(0));
+                websites=w;
+                result.setText("Number of websites fetched is: "+websites.size()+"\n\n"+websites.get(0)+"\n\n"+websites.get(1)+"\n\n"+websites.get(2)+"\n\n"+websites.get(3)+"\n\n"+websites.get(4));
             }
         }
 
     }
-  
+
