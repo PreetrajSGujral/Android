@@ -88,34 +88,4 @@ public class MainActivity extends AppCompatActivity {
         }
 
     }
-   /* private void getWebsite()
-    {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                final StringBuilder builder= new StringBuilder();
-
-                try{
-                    org.jsoup.nodes.Document doc= (org.jsoup.nodes.Document) Jsoup.connect("https://www.google.com/search?q=amazon&num=2").get();
-                    String title=doc.title();
-                    Elements links= doc.select("a[href]");
-
-                    builder.append(title).append("\n");
-
-                    for(Element link: links)
-                    {
-                        builder.append("\n").append("Link: ").append(link.attr("href"));
-                    }
-                }catch( IOException e)
-                {
-                    builder.append(e.getMessage()).append("\n");
-                }
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        result.setText(builder.toString());
-                    }
-                });
-            }
-        });
-    }*/
+  
