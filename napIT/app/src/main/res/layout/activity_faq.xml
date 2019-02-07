@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.example.android.fitnessapp2.FAQ">
+
+
+    <TextView android:layout_height="wrap_content" android:layout_width="wrap_content" android:layout_centerHorizontal="true" android:layout_alignParentTop="true" android:layout_marginTop="14sp" tools:layout_editor_absoluteY="16sp" tools:layout_editor_absoluteX="170sp" android:text="FAQ" android:textColor="#000" android:gravity="center" android:textSize="40sp" android:fontFamily="cursive" android:textStyle="bold" android:id="@+id/idFaq"/>
+
+    <TextView android:layout_height="wrap_content" android:layout_width="wrap_content" android:layout_marginTop="17sp" android:text="Does the app know if I am running or walking?" android:textColor="#FF0000" android:textStyle="bold" android:id="@+id/fone" android:layout_alignStart="@+id/ftwo" android:layout_below="@+id/idFaq"/>
+
+    <TextView android:layout_height="wrap_content" android:layout_width="wrap_content" android:layout_marginTop="13sp" android:text="The steps are counted while the timer is on for the time you walk or run. Based on the number of steps and the time taken, the app calculates the calories burnt." android:textColor="#000" android:id="@+id/foneA" android:layout_alignStart="@+id/fone" android:layout_below="@+id/fone"/>
+
+    <TextView android:layout_height="wrap_content" android:layout_width="wrap_content" android:layout_centerHorizontal="true" android:layout_marginTop="12sp" android:text="How is it detected whether sleep is proper or improper?" android:textColor="#FF0000" android:textStyle="bold" android:id="@+id/ftwo" android:layout_below="@+id/foneA"/>
+
+    <TextView android:layout_height="wrap_content" android:layout_width="wrap_content" android:layout_marginTop="17sp" android:text="SVM is used to classify whether the sleep is proper or improper. It is trained on a verified dataset and the algorithm is then run on a test case(user)." android:textColor="#000" android:id="@+id/ftwoA" android:layout_alignStart="@+id/ftwo" android:layout_below="@+id/ftwo"/>
+
+    <TextView android:layout_height="wrap_content" android:layout_width="wrap_content" android:layout_marginTop="12sp" android:text="How accurate is the analysis of sleep?" android:textColor="#FF0000" android:textStyle="bold" android:id="@+id/fthree" android:layout_alignStart="@+id/ftwoA" android:layout_below="@+id/ftwoA"/>
+
+    <TextView android:layout_height="wrap_content" android:layout_width="wrap_content" android:layout_marginTop="14sp" android:text="The analysis of sleep, mainly classification is done using SVM(Support Vector Machine algorithm) which has an accuracy of 95.67%." android:textColor="#000" android:id="@+id/fthreeA" android:layout_alignStart="@+id/fthree" android:layout_below="@+id/fthree"/>
+
+    <ImageView android:layout_height="200sp" android:layout_width="200sp" android:layout_centerHorizontal="true" android:layout_marginTop="19sp" android:id="@+id/imageView2" android:layout_below="@+id/fthreeA" app:srcCompat="@drawable/questionsfz"/>
+</RelativeLayout>

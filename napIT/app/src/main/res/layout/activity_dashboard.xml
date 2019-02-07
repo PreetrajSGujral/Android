@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_dashboard"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.example.android.fitnessapp2.DashboardActivity">
+    <ImageButton
+        android:layout_height="100sp"
+        android:layout_width="100sp"
+        android:id="@+id/suggestionicon"
+        android:background="@drawable/gradient"
+        android:src="@drawable/suggestzoo"
+        android:scaleType="fitCenter"
+        android:padding="20sp"
+        android:adjustViewBounds="true"
+        android:layout_weight="1"
+        android:layout_marginRight="5sp"
+        android:layout_marginLeft="2sp"
+        android:layout_below="@+id/contacticon"
+        android:layout_alignStart="@+id/vsicon"
+        android:layout_marginTop="19dp" />
+
+    <ImageButton
+        android:layout_height="100sp"
+        android:layout_width="100sp"
+        android:id="@+id/contacticon"
+        android:background="@drawable/gradient"
+        android:src="@drawable/contactzoo"
+        android:scaleType="fitCenter"
+        android:padding="20sp"
+        android:adjustViewBounds="true"
+        android:layout_weight="1"
+        android:layout_marginRight="4sp"
+        android:layout_marginLeft="5sp"
+        android:layout_alignTop="@+id/vsicon"
+        android:layout_alignStart="@+id/idLogOut" />
+
+    <ImageButton
+        android:layout_height="100sp"
+        android:layout_width="100sp"
+        android:id="@+id/sleepicon"
+        android:background="@drawable/gradient"
+        android:src="@drawable/sleepingzoozoo"
+        android:scaleType="fitCenter"
+        android:padding="20sp"
+        android:adjustViewBounds="true"
+        android:layout_weight="1"
+        android:layout_marginRight="4sp"
+        android:layout_marginLeft="5sp"
+        android:layout_alignTop="@+id/exerciseicon"
+        android:layout_alignStart="@+id/idLogOut" />
+
+    <ImageButton
+        android:layout_height="100sp"
+        android:layout_width="100sp"
+        android:id="@+id/exerciseicon"
+        android:background="@drawable/gradient"
+        android:src="@drawable/exzoozoo"
+        android:scaleType="fitCenter"
+        android:padding="20sp"
+        android:adjustViewBounds="true"
+        android:layout_weight="1"
+        android:layout_marginRight="5sp"
+        android:layout_marginLeft="2sp"
+        android:clickable="true"
+        android:layout_marginTop="27dp"
+        android:layout_below="@+id/dash"
+        android:layout_alignParentStart="true"
+        android:layout_marginStart="12dp" />
+
+    <ImageButton
+        android:layout_height="100sp"
+        android:layout_width="100sp"
+        android:id="@+id/vsicon"
+        android:background="@drawable/gradient"
+        android:src="@drawable/statszoo"
+        android:scaleType="fitCenter"
+        android:padding="20sp"
+        android:adjustViewBounds="true"
+        android:layout_weight="1"
+        android:layout_marginRight="5sp"
+        android:layout_marginLeft="2sp"
+        android:layout_marginTop="18dp"
+        android:layout_below="@+id/sleepicon"
+        android:layout_alignStart="@+id/exerciseicon" />
+
+    <ImageButton
+        android:layout_height="100sp"
+        android:layout_width="100sp"
+        android:id="@+id/faqicon"
+        android:background="@drawable/gradient"
+        android:src="@drawable/question"
+        android:scaleType="fitCenter"
+        android:padding="20sp"
+        android:adjustViewBounds="true"
+        android:layout_weight="1"
+        android:layout_marginRight="4sp"
+        android:layout_marginLeft="5sp"
+        android:layout_alignTop="@+id/suggestionicon"
+        android:layout_alignStart="@+id/idLogOut" />
+
+    <Button
+        android:layout_height="wrap_content"
+        android:layout_width="100sp"
+        android:id="@+id/idLogOut"
+        android:background="@drawable/gradient"
+        android:layout_marginBottom="14dp"
+        android:layout_marginEnd="11dp"
+        android:text="Logout"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true" />
+
+    <TextView android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:id="@+id/dash" android:text="Welcome to napIt"
+        android:textColor="#000" android:gravity="center"
+        android:textStyle="bold" android:textSize="40sp"
+        android:fontFamily="cursive"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true" />
+
+    <com.cuboid.cuboidcirclebutton.CuboidButton
+        android:layout_width="70sp"
+        android:layout_height="70sp"
+        android:id="@+id/userprofile"
+        app:cub_border_radius="0sp"
+        app:cub_color="#d3d3d3"
+        app:cub_hover_color="#d3d3d3"
+        app:cub_icon="@drawable/ic_action_name"
+        android:layout_alignBottom="@+id/idLogOut"
+        android:layout_centerHorizontal="true" />
+    </RelativeLayout>

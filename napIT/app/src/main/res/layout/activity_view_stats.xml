@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.example.android.fitnessapp2.ViewStats">
+
+    <TextView
+        android:id="@+id/viewStats"
+        android:textStyle="bold"
+        android:fontFamily="cursive"
+        android:textSize="40sp"
+        android:gravity="center"
+        android:textColor="#000"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="View Statistics"
+        tools:layout_editor_absoluteX="170sp"
+        tools:layout_editor_absoluteY="16sp"
+        android:layout_marginTop="14sp"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        />
+
+    <Button
+        android:id="@+id/viewExercise"
+        android:layout_width="90sp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="55dp"
+        android:text="Exercise"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginBottom="38dp" />
+
+    <Button
+        android:id="@+id/viewSleep"
+        android:layout_width="90sp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignTop="@+id/viewExercise"
+        android:layout_marginEnd="53dp"
+        android:text="Sleep" />
+
+    <ImageView
+        android:id="@+id/imageView4"
+        android:layout_width="wrap_content"
+        android:layout_height="300sp"
+        app:srcCompat="@drawable/apple"
+        android:layout_marginTop="22dp"
+        android:layout_below="@+id/viewStats"
+        android:layout_centerHorizontal="true" />
+
+</RelativeLayout>

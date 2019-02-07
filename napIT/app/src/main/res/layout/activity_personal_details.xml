@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.example.android.fitnessapp2.PersonalDetails">
+    <TextView
+        android:id="@+id/personalDetails"
+        android:textStyle="bold"
+        android:fontFamily="cursive"
+        android:textSize="40sp"
+        android:gravity="center"
+        android:textColor="#000"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Personal Details"
+        tools:layout_editor_absoluteX="170sp"
+        tools:layout_editor_absoluteY="16sp"
+        android:layout_marginTop="14sp"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        />
+
+    <TextView
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:textAppearance="@style/Base.TextAppearance.AppCompat.Large"
+        android:text="Name: " android:id="@+id/textname"
+        android:layout_below="@+id/personalDetails"
+        android:layout_alignStart="@+id/textemail"
+        android:layout_marginTop="33dp"
+        />
+
+    <TextView
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:textAppearance="@style/Base.TextAppearance.AppCompat.Large"
+        android:text="Email ID: "
+        android:id="@+id/textemail"
+        android:layout_marginTop="26dp"
+        android:layout_below="@+id/textname"
+        android:layout_alignParentStart="true" />
+
+    <TextView
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:textAppearance="@style/Base.TextAppearance.AppCompat.Large"
+        android:text=" "
+        android:id="@+id/name_holder"
+        android:layout_alignStart="@+id/email_holder"
+        android:layout_above="@+id/textemail"/>
+
+
+    <TextView
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:textAppearance="@style/Base.TextAppearance.AppCompat.Large"
+        android:text=" "
+        android:id="@+id/email_holder"
+        android:layout_alignStart="@+id/personalDetails"
+        android:layout_marginStart="39sp"
+        android:layout_alignBottom="@+id/textemail"
+        android:layout_alignBaseline="@+id/textemail"/>
+    <TextView
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:textAppearance="@style/Base.TextAppearance.AppCompat.Large"
+        android:text="Gender: "
+        android:id="@+id/textgender"
+        android:layout_alignStart="@+id/textage"
+        android:layout_alignTop="@+id/gender_holder" />
+
+
+    <TextView
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:textAppearance="@style/Base.TextAppearance.AppCompat.Large"
+        android:text=" "
+        android:id="@+id/gender_holder"
+        android:layout_alignStart="@+id/email_holder"
+        android:layout_toRightOf="@+id/textgender"
+        android:layout_marginTop="21sp"
+        android:layout_below="@+id/textemail"/>
+
+
+    <TextView
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:textAppearance="@style/Base.TextAppearance.AppCompat.Large"
+        android:text="Age:"
+        android:id="@+id/textage"
+        android:layout_centerVertical="true"
+        />
+
+    <TextView
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:textAppearance="@style/Base.TextAppearance.AppCompat.Large"
+        android:text=" "
+        android:id="@+id/age_holder"
+        android:layout_above="@+id/textheight"
+        android:layout_alignStart="@+id/gender_holder" />
+
+    <TextView
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:textAppearance="@style/TextAppearance.AppCompat.Large"
+        android:text="Height: "
+        android:id="@+id/textheight"
+        android:layout_marginTop="21dp"
+        android:layout_below="@+id/textage"
+        android:layout_alignStart="@+id/textage" />
+
+    <TextView
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:textAppearance="@style/TextAppearance.AppCompat.Large"
+        android:text="Weight: "
+        android:id="@+id/textweight"
+        android:layout_marginTop="20dp"
+        android:layout_below="@+id/textheight"
+        android:layout_alignStart="@+id/textheight" />
+
+    <TextView
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:textAppearance="@style/Base.TextAppearance.AppCompat.Large"
+        android:text=" "
+        android:id="@+id/weight_holder"
+        android:layout_alignStart="@+id/email_holder"
+        android:layout_above="@+id/textllocation"
+        android:layout_toEndOf="@+id/height_holder"/>
+
+    <TextView
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:textAppearance="@style/Base.TextAppearance.AppCompat.Large"
+        android:text=" "
+        android:id="@+id/height_holder"
+        android:layout_alignStart="@+id/email_holder"
+        android:layout_alignTop="@+id/textheight"
+        android:layout_toEndOf="@+id/age_holder"/>
+
+    <Button
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:text="Edit Details"
+        android:id="@+id/btnDetails"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="20dp" />
+
+
+    <TextView
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:textAppearance="@style/TextAppearance.AppCompat.Large"
+        android:text="Location: "
+        android:id="@+id/textllocation"
+        android:layout_below="@+id/textweight"
+        android:layout_alignStart="@+id/textweight"
+        android:layout_marginTop="24dp" />
+
+    <TextView
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:textAppearance="@style/Base.TextAppearance.AppCompat.Large"
+        android:text=" "
+        android:id="@+id/location_holder"
+        android:layout_alignTop="@+id/textllocation"
+        android:layout_toEndOf="@+id/weight_holder"
+        android:layout_alignStart="@+id/email_holder"/>
+</RelativeLayout>

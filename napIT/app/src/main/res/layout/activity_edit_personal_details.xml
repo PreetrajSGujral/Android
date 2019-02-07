@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.example.android.fitnessapp2.EditPersonalDetails">
+
+
+
+        <TextView
+            android:id="@+id/edit_personalDetails"
+            android:textStyle="bold"
+            android:fontFamily="cursive"
+            android:textSize="40sp"
+            android:gravity="center"
+            android:textColor="#000"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Edit Personal Details"
+            tools:layout_editor_absoluteX="170sp"
+            tools:layout_editor_absoluteY="16sp"
+            android:layout_marginTop="14sp"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true" />
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Name: "
+            android:textAppearance="@style/Base.TextAppearance.AppCompat.Large"
+            android:layout_below="@+id/edit_personalDetails"
+            android:layout_alignParentStart="true"
+            android:layout_marginStart="19dp"
+            android:layout_marginTop="32dp"
+            android:id="@+id/nameEditText"
+            />
+
+        <EditText
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:hint="Enter your Name"
+            android:textAppearance="@style/Base.TextAppearance.AppCompat.Large"
+            android:id="@+id/edit_name"
+            android:layout_alignBaseline="@+id/nameEditText"
+            android:layout_alignBottom="@+id/nameEditText"
+            android:layout_alignStart="@+id/edit_age"
+            android:fontFamily="monospace"/>
+
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Gender: "
+            android:id="@+id/Genderedit"
+            android:textAppearance="@style/Base.TextAppearance.AppCompat.Large"
+            android:layout_marginTop="20dp"
+            android:layout_below="@+id/edit_name"
+            android:layout_alignStart="@+id/nameEditText" />
+
+        <RadioGroup
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="30sp"
+            android:orientation="horizontal"
+            android:layout_alignTop="@+id/Genderedit"
+            android:layout_centerHorizontal="true">
+                <RadioButton android:id="@+id/radio_male"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Male"
+                    android:onClick="onRadioButtonClicked"/>
+                <RadioButton android:id="@+id/female"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:onClick="onRadioButtonClicked"
+                    android:text="Female"/>
+        </RadioGroup>
+
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Age: "
+            android:id="@+id/ageEditText"
+            android:textAppearance="@style/Base.TextAppearance.AppCompat.Large"
+            android:layout_marginTop="20dp"
+
+            android:layout_below="@+id/Genderedit"
+            android:layout_alignStart="@+id/nameEditText" />
+
+        <EditText
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:hint="Enter your Age"
+            android:textAppearance="@style/Base.TextAppearance.AppCompat.Large"
+            android:id="@+id/edit_age"
+            android:inputType="number"
+            android:layout_alignBaseline="@+id/ageEditText"
+            android:layout_alignBottom="@+id/ageEditText"
+            android:layout_alignStart="@+id/edit_height"
+            android:fontFamily="monospace"/>
+
+        <EditText
+            android:id="@+id/edit_height"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:hint="Enter your Height"
+            android:inputType="numberDecimal"
+            android:textAppearance="@style/Base.TextAppearance.AppCompat.Large"
+            android:layout_alignBaseline="@+id/heightEditText"
+            android:layout_alignBottom="@+id/heightEditText"
+            android:layout_alignStart="@+id/edit_weight"
+            android:fontFamily="monospace"/>
+
+        <TextView
+            android:id="@+id/heightEditText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignStart="@+id/ageEditText"
+            android:layout_below="@+id/edit_age"
+            android:layout_marginTop="20dp"
+            android:text="Height: "
+            android:textAppearance="@style/Base.TextAppearance.AppCompat.Large" />
+
+        <TextView
+            android:id="@+id/weightEditText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignStart="@+id/heightEditText"
+            android:textAppearance="@style/Base.TextAppearance.AppCompat.Large"
+            android:layout_below="@+id/edit_height"
+            android:layout_marginTop="17dp"
+            android:text="Weight: " />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Save"
+            android:id="@+id/saveDetails"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="14dp" />
+
+
+        <EditText
+            android:id="@+id/edit_weight"
+            android:inputType="numberDecimal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="@style/Base.TextAppearance.AppCompat.Large"
+            android:ems="10"
+            android:hint="Enter your Weight"
+            android:fontFamily="monospace"
+            android:layout_alignBaseline="@+id/weightEditText"
+            android:layout_alignBottom="@+id/weightEditText"
+            android:layout_alignStart="@+id/edit_location" />
+
+        <TextView
+            android:id="@+id/locationEditText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignStart="@+id/weightEditText"
+            android:textAppearance="@style/Base.TextAppearance.AppCompat.Large"
+            android:layout_below="@+id/edit_weight"
+            android:layout_marginTop="19dp"
+            android:text="Location: " />
+
+        <EditText
+            android:id="@+id/edit_location"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:textAppearance="@style/Base.TextAppearance.AppCompat.Large"
+            android:hint="Enter your Location"
+            android:inputType="textPersonName"
+            android:layout_alignBaseline="@+id/locationEditText"
+            android:layout_alignBottom="@+id/locationEditText"
+            android:layout_toEndOf="@+id/locationEditText"
+            android:fontFamily="monospace"/>
+    </RelativeLayout>
+
+
