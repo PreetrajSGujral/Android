@@ -1,0 +1,3 @@
+napIT
+An android application to track your steps, monitor your sleeping patterns and suggest you ways to improve your health based on them.
+Uses sensors in an android phone to record data, analyze it using SVM model and present results based on observations.
